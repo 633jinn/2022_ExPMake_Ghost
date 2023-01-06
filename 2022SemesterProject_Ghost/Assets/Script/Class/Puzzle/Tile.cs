@@ -6,7 +6,6 @@ using TMPro;
 
 public class Tile : MonoBehaviour, IPointerClickHandler
 {
-//ㅁㄴㅇㄹ
     TextMeshProUGUI textNumeric;
     [SerializeField]
     private PuzzleManager puzzleManager;
@@ -27,12 +26,11 @@ public class Tile : MonoBehaviour, IPointerClickHandler
     public void Setup(int hideNumeric, int numeric)
     {
         textNumeric = GetComponentInChildren<TextMeshProUGUI>();
-
+        textNumeric.enabled = false;
         Numeric = numeric;
         if(Numeric == hideNumeric)
         {
             GetComponent<UnityEngine.UI.Image>().enabled = false;
-            textNumeric.enabled = false;
         }
     }
     public void SetCorrectPosition()
@@ -41,7 +39,10 @@ public class Tile : MonoBehaviour, IPointerClickHandler
     }
     public void OnPointerClick(PointerEventData eventData)
     {
-        puzzleManager.IsMoveTile(this);
+        if (!GameManager.Instance.puzzleClearArray[GameManager.Instance.puzzleArrayNum])
+        {
+            puzzleManager.IsMoveTile(this);
+        }
     }
     public void OnMoveTo(Vector3 end)
     {

@@ -1529,6 +1529,8 @@ MonoBehaviour:
     soulName: 
     soulShape: 
     perfumeScent: 
+  puzzleImage: 
+  countcheck: 1
 --- !u!4 &1859244211
 Transform:
   m_ObjectHideFlags: 0

@@ -18,6 +18,7 @@ public class RoomManager : MonoBehaviour
     void Start()
     {
         dialogueName = "RandomDialogue";
+        SetPuzzleStory();
     }
 
     public void TalkWithSoul()
@@ -38,5 +39,15 @@ public class RoomManager : MonoBehaviour
         int randomNum = Random.Range(1, 12);
         GameManager.Instance.setDialogueName = dialogueName + randomNum.ToString();
         Debug.Log(dialogueName + randomNum);
+    }
+    public void SetPuzzleStory()
+    {
+        if (GameManager.Instance.puzzleDialogue == true)
+        {
+            GameManager.Instance.setDialogueName = GameManager.Instance.beforeSetDialogueName;
+            dialogueManager.LoadDialogue();
+            GameManager.Instance.puzzleDialogue = false;
+        }
+        
     }
 }

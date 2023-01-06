@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
+using TMPro;
 public class PuzzleManager : MonoBehaviour
 {
+    [SerializeField]
+    DialogueManager dialogueManager;
     [SerializeField]
     private Transform tilesParent;
     [SerializeField]
@@ -13,21 +16,25 @@ public class PuzzleManager : MonoBehaviour
 
     private float neighborTileDistance = 320; //인접한 타일 사이의 거리
     public Vector3 EmptyTilePosition { set; get; }
-   
 
+    private Image img; //이미지 삽입
+    public Sprite[] sprites;
     private IEnumerator Start()
     {
         tileList = new List<Tile>();
 
         SpawnTiles();
 
-        UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(tilesParent.GetComponent<RectTransform>());
-        yield return new WaitForEndOfFrame();
+        SetPuzzle();
+        if (ClearCheck())
+        {
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(tilesParent.GetComponent<RectTransform>());
+            yield return new WaitForEndOfFrame();
 
-        tileList.ForEach(x => x.SetCorrectPosition());
+            tileList.ForEach(x => x.SetCorrectPosition());
 
-        Suffle();
-
+            Suffle();
+        }
     }
 
     private void SpawnTiles()
@@ -75,7 +82,6 @@ public class PuzzleManager : MonoBehaviour
         EmptyTilePosition = tileList[tileList.Count - 1].GetComponent<RectTransform>().localPosition;
         for (int i = 0; i < 8; i++)
         {
-            //tileList[i].OnMoveTo(EmptyTilePosition);
             if (tilesParent.GetChild(i).GetComponent<Tile>().Numeric == i + 1)
                 tileList[i].MakeCorrectTrue();
         }
@@ -98,6 +104,9 @@ public class PuzzleManager : MonoBehaviour
         if (tiles.Count == puzzleSize.x * puzzleSize.y - 1)
         {
             Debug.Log("GameClear");
+            GameManager.Instance.puzzleClearArray[GameManager.Instance.puzzleArrayNum] = true;
+            GameManager.Instance.puzzleDialogue = true;
+            SceneManager.LoadScene("RoomScene");
         }
     }
     private bool CheckEntropy()//entropy 검사
@@ -120,5 +129,38 @@ public class PuzzleManager : MonoBehaviour
             return true;
         else
             return false;
+    }
+    public void SetPuzzle()
+    {
+        int num = 0;
+        sprites = Resources.LoadAll<Sprite>(GameManager.Instance.puzzleImage);
+        
+        for (int y = 0; y < puzzleSize.y; ++y)
+        {
+            for (int x = 0; x < puzzleSize.x; ++x)
+            {
+                GameObject tileObject = tilesParent.GetChild(num).gameObject;
+                img = tileObject.GetComponent<Image>();
+                img.sprite = sprites[num];
+                num++;
+            }
+        }
+    }
+    bool ClearCheck()
+    {
+        GameObject clearText = GameObject.Find("GameClear");
+        if (GameManager.Instance.puzzleClearArray[GameManager.Instance.puzzleArrayNum])
+        {
+            clearText.GetComponent<UnityEngine.UI.Image>().enabled = true;
+            clearText.GetComponentInChildren<TextMeshProUGUI>().enabled = true;
+            //SceneManager.LoadScene("RoomScene");
+            return false;
+        }
+        else
+        {
+            clearText.GetComponent<UnityEngine.UI.Image>().enabled = false;
+            clearText.GetComponentInChildren<TextMeshProUGUI>().enabled = false;
+            return true;
+        }
     }
 }

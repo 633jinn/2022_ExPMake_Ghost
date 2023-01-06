@@ -18,6 +18,12 @@ public class GameManager : MonoBehaviour
 
     public SaveDataClass saveData;
 
+    public string puzzleImage;
+    public int countCheck = 1;
+    public string beforeSetDialogueName;
+    public int puzzleArrayNum;
+    public bool[] puzzleClearArray = { false, false, false, false, false, false, false, false };
+    public bool puzzleDialogue = false;
     public static GameManager Instance
     {
         get
@@ -147,5 +153,9 @@ public class GameManager : MonoBehaviour
                 break;
         }
         jsonManager.SaveJson(saveData, "SaveData");
+    }
+    public void SetPuzzleStory()
+    {
+        //SceneManager.LoadScene("StoryScene");
     }
 }
